@@ -10,14 +10,27 @@ app.use(express.json());
 app.post("/analyze", async (req, res) => {
   const { jobText } = req.body;
 
-  const prompt = `You are an AI job scam detector. Analyze the job description below and classify it as Low, Medium, or High risk. Also explain why.
+ const prompt = `You are an AI job scam detector. Analyze the following job description for potential fraud. 
+
+1. Classify the risk as: Low, Medium, or High.
+2. Assign a fraud score (0–100).
+3. Identify and list red flags, if any.
+4. Explain briefly.
 
 Job Description:
 "${jobText}"
 
-Return the result in this format:
-Risk Level: <Low/Medium/High>
-Reason: <explanation>`;
+Respond strictly in JSON format like:
+{
+  "risk_level": "High",
+  "fraud_score": 85,
+  "red_flags": ["Training fee requested", "Unverified email address"],
+  "reason": "Job requests a processing fee and uses a generic Gmail address."
+}
+`;
+
+
+
 
   try {
     const response = await axios.post(
