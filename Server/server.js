@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -19,17 +20,30 @@ Risk Level: <Low/Medium/High>
 Reason: <explanation>`;
 
   try {
-    const response = await axios.post("http://localhost:11434/api/generate", {
-      model: "mistral", // or any model you pulled via Ollama
-      prompt: prompt,
-      stream: false
-    });
+    const response = await axios.post(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        model: "mistralai/mistral-7b-instruct",
+        messages: [{ role: "user", content: prompt }],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    const reply = response.data.response;
+    const reply = response.data.choices?.[0]?.message?.content;
+
+    if (!reply) {
+      return res.status(500).json({ error: "No response from model." });
+    }
+
     res.json({ result: reply });
   } catch (err) {
-    console.error("Ollama Error:", err.message);
-    res.status(500).send("Ollama API failed");
+    console.error("OpenRouter Error:", err.message);
+    res.status(500).send("OpenRouter API failed");
   }
 });
 

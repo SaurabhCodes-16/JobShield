@@ -106,6 +106,12 @@ const handleAnalyze = async () => {
 
     const data = await res.json();
 
+    if (!data.result || typeof data.result !== "string") {
+      console.error("Unexpected response:", data);
+      alert("⚠️ Invalid response from server. Check backend logs.");
+      return;
+    }
+
     const riskMatch = data.result.match(/Risk Level:\s*(Low|Medium|High)/i);
     const reasonMatch = data.result.match(/Reason:\s*(.+)/i);
 
@@ -117,9 +123,10 @@ const handleAnalyze = async () => {
     setResult(parsedResult);
   } catch (error) {
     console.error("Error analyzing job:", error);
-    alert("Failed to analyze job. Please try again.");
+    alert("❌ Failed to analyze job. Is your backend running?");
   }
 };
+
 
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
