@@ -13,7 +13,7 @@ app.post("/analyze", async (req, res) => {
  const prompt = `You are an AI job scam detector. Analyze the following job description for potential fraud. 
 
 1. Classify the risk as: Low, Medium, or High.
-2. Assign a fraud score (0–100).
+2. Assign a fraud score (0-100).
 3. Identify and list red flags, if any.
 4. Explain briefly.
 
